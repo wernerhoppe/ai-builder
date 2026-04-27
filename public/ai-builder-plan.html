@@ -743,18 +743,19 @@
     <div class="sprint-grid">
 
       <div class="sprint-card active">
-        <div class="sprint-n">Sprint 1 — Active</div>
+        <div class="sprint-n">Sprint 1 — Complete</div>
         <span class="sprint-icon">📊</span>
         <div class="sprint-title">Time Audit + Automation Plan</div>
         <div class="sprint-body">Built CLAUDE.md, ran a full data-backed time audit across 5 sources, and produced a prioritized build roadmap.</div>
         <span class="sprint-badge">Complete</span>
       </div>
 
-      <div class="sprint-card upcoming">
-        <div class="sprint-n">Sprint 2</div>
+      <div class="sprint-card active">
+        <div class="sprint-n">Sprint 2 — Complete</div>
         <span class="sprint-icon">🌐</span>
-        <div class="sprint-title">Deployed Website + Data Collection Tool</div>
-        <div class="sprint-body">Coming in Sprint 2</div>
+        <div class="sprint-title">Deployed Website + Live Dashboard</div>
+        <div class="sprint-body">Kanban dashboard backed by Notion, automation advisor agent, and full portfolio deployed to production on Vercel.</div>
+        <span class="sprint-badge">Complete</span>
       </div>
 
       <div class="sprint-card upcoming">
@@ -790,10 +791,141 @@
 </section>
 
 
+<!-- ══ MARQUEE: light → dark ══ -->
+<div class="marquee-wrap on-light">
+  <div class="marquee-track">
+    <span>Sprint 2 Complete</span><span>·</span>
+    <span>Kanban Dashboard</span><span>·</span>
+    <span>Notion Backend</span><span>·</span>
+    <span>Automation Advisor Agent</span><span>·</span>
+    <span>Live on Vercel</span><span>·</span>
+    <span>5 Automations Tracked</span><span>·</span>
+    <span>Werner Hoppe</span><span>·</span>
+    <span>Leland AI Builder L2</span><span>·</span>
+    <span>Sprint 2 Complete</span><span>·</span>
+    <span>Kanban Dashboard</span><span>·</span>
+    <span>Notion Backend</span><span>·</span>
+    <span>Automation Advisor Agent</span><span>·</span>
+    <span>Live on Vercel</span><span>·</span>
+    <span>5 Automations Tracked</span><span>·</span>
+    <span>Werner Hoppe</span><span>·</span>
+    <span>Leland AI Builder L2</span><span>·</span>
+  </div>
+</div>
+
+
+<!-- ══ SPRINT 2 DELIVERABLES — DARK ══ -->
+<section class="sec-dark" id="sprint2">
+  <div class="inner">
+    <div class="sec-eyebrow">Sprint 2 — April 27, 2026</div>
+    <h2 class="sec-title">What I<br>shipped</h2>
+    <p class="sec-sub">Three deliverables: a live Kanban dashboard backed by Notion, an automation advisor agent, and the full portfolio deployed to production.</p>
+
+    <div class="build-stack">
+
+      <!-- ── Kanban Dashboard + Notion Backend ── -->
+      <div class="build-card">
+        <div class="build-top">
+          <div class="build-meta">
+            <span class="build-rank-label">Deliverable 01 — Infrastructure</span>
+            <div class="build-tags">
+              <span class="tag tag-accent">Notion API</span>
+              <span class="tag tag-outline-light">5 cards tracked</span>
+              <div class="build-status"><span class="build-status-dot" style="background:var(--accent);"></span>Live</div>
+            </div>
+          </div>
+          <div class="build-outcome">5 automation ideas live on a Kanban board — drag a card to "In Progress" and Notion updates in real time, no manual logging required.</div>
+        </div>
+        <div class="build-body">
+          <div class="build-col">
+            <div class="build-col-hd">The problem</div>
+            <div class="build-col-body">Roadmap status lived in my head. No single view across all 5 builds, no way to track what's stalled vs. in flight, and nothing that would sync to a source of truth I'd actually maintain.</div>
+          </div>
+          <div class="build-col">
+            <div class="build-col-hd">What I built</div>
+            <div class="build-col-body">ai-builder-dashboard.html with 4 Kanban columns (Suggested / To Build / In Progress / Done). Backend: an AI Automation Roadmap database in Notion, queried via a Vercel serverless function. Drag-and-drop syncs card status to Notion instantly — no page refresh, optimistic UI update.</div>
+          </div>
+        </div>
+        <div class="build-foot">
+          <span class="tag tag-accent">Notion + Vercel</span>
+          <span class="tag tag-outline-light">Serverless API</span>
+          <a href="https://ai-builder-tan-ten.vercel.app/ai-builder-dashboard.html" target="_blank" style="font-size:8.4px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:rgba(243,237,211,.45);border:1px solid rgba(243,237,211,.15);border-radius:9999px;padding:4px 10px;text-decoration:none;">↗ Live Dashboard</a>
+        </div>
+      </div>
+
+      <!-- ── Automation Advisor Agent ── -->
+      <div class="build-card">
+        <div class="build-top">
+          <div class="build-meta">
+            <span class="build-rank-label">Deliverable 02 — Agentic Skill</span>
+            <div class="build-tags">
+              <span class="tag tag-accent">Claude Code Skill</span>
+              <span class="tag tag-outline-light">3 modes</span>
+              <div class="build-status"><span class="build-status-dot" style="background:var(--accent);"></span>Active</div>
+            </div>
+          </div>
+          <div class="build-outcome">A Claude Code skill that reads my roadmap and session history, then delivers a 60-second briefing: what's stalled, what's next, and one automation to add now.</div>
+        </div>
+        <div class="build-body">
+          <div class="build-col">
+            <div class="build-col-hd">The problem</div>
+            <div class="build-col-body">No structured way to step back and ask "what should I build next?" Sprint decisions were gut-feel, not grounded in what I'd actually been working on or what was sitting idle in the roadmap.</div>
+          </div>
+          <div class="build-col">
+            <div class="build-col-hd">What I built</div>
+            <div class="build-col-body">A three-mode skill saved at ~/.claude/skills/automation-advisor/SKILL.md. Mode 1 (Roadmap Check) and Mode 2 (Work Retrospective) run as parallel subagents and merge into one briefing. Mode 3 (Build Planner) is interactive — it scopes a full build plan and saves it to Notion and the dashboard.</div>
+          </div>
+        </div>
+        <div class="build-foot">
+          <span class="tag tag-accent">Subagent Pattern</span>
+          <span class="tag tag-outline-light">Notion MCP</span>
+          <span class="tag tag-outline-light">Runs with /automation-advisor</span>
+        </div>
+      </div>
+
+      <!-- ── Live Portfolio ── -->
+      <div class="build-card">
+        <div class="build-top">
+          <div class="build-meta">
+            <span class="build-rank-label">Deliverable 03 — Deployment</span>
+            <div class="build-tags">
+              <span class="tag tag-accent">Vercel</span>
+              <span class="tag tag-outline-light">3 pages live</span>
+              <div class="build-status"><span class="build-status-dot" style="background:var(--accent);"></span>Production</div>
+            </div>
+          </div>
+          <div class="build-outcome">The full Sprint 1 + Sprint 2 portfolio is live at a public URL — shareable with PACS, accessible anywhere, no local server required.</div>
+        </div>
+        <div class="build-body">
+          <div class="build-col">
+            <div class="build-col-hd">The problem</div>
+            <div class="build-col-body">Sprint 1 output existed only on my laptop. No shareable URL, no way to send the automation plan or time audit to anyone at PACS, and no proof of work beyond a local HTML file.</div>
+          </div>
+          <div class="build-col">
+            <div class="build-col-hd">What I built</div>
+            <div class="build-col-body">Deployed to Vercel via GitHub. Static pages served from public/, serverless Notion API in api/, credentials secured in Vercel environment variables — never committed to git. Three live URLs: time audit, automation plan, and the Kanban dashboard.</div>
+          </div>
+        </div>
+        <div class="build-foot">
+          <a href="https://ai-builder-tan-ten.vercel.app/time-audit.html" target="_blank" style="font-size:8.4px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:rgba(243,237,211,.45);border:1px solid rgba(243,237,211,.15);border-radius:9999px;padding:4px 10px;text-decoration:none;">↗ Time Audit</a>
+          <a href="https://ai-builder-tan-ten.vercel.app/ai-builder-plan.html" target="_blank" style="font-size:8.4px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:rgba(243,237,211,.45);border:1px solid rgba(243,237,211,.15);border-radius:9999px;padding:4px 10px;text-decoration:none;">↗ Automation Plan</a>
+          <a href="https://ai-builder-tan-ten.vercel.app/ai-builder-dashboard.html" target="_blank" style="font-size:8.4px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:rgba(243,237,211,.45);border:1px solid rgba(243,237,211,.15);border-radius:9999px;padding:4px 10px;text-decoration:none;">↗ Dashboard</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="reclaim">
+      <strong>Sprint 2 is fully deployed.</strong> The roadmap is no longer a static document — it's a live system. Every automation idea has a card, every card has a status, and every status change syncs to Notion. The foundation for Sprints 3–6 is in place.
+    </div>
+  </div>
+</section>
+
+
 <!-- ══ FOOTER ══ -->
 <footer>
   <div class="foot-row">
-    <span class="foot-txt">AI Builder Automation Portfolio — April 23, 2026 &nbsp;·&nbsp; Built in <span class="foot-accent">L2</span></span>
+    <span class="foot-txt">AI Builder Automation Portfolio — April 27, 2026 &nbsp;·&nbsp; Built in <span class="foot-accent">L2</span></span>
     <span class="foot-txt">Werner Hoppe &nbsp;·&nbsp; Leland AI Builder</span>
   </div>
 </footer>
