@@ -25,12 +25,22 @@ function parseBody(req) {
   });
 }
 
+// Works in both Vercel serverless (res.json / res.status) and raw Node http
+function send(res, statusCode, body) {
+  const json = JSON.stringify(body);
+  if (typeof res.status === 'function') {
+    return res.status(statusCode).json(body);
+  }
+  res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+  res.end(json);
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, PATCH, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method === 'OPTIONS') { res.writeHead(200); return res.end(); }
 
   try {
     // ── GET: return all rows ──────────────────────────────────
@@ -57,7 +67,7 @@ module.exports = async (req, res) => {
         };
       });
 
-      return res.json(cards);
+      return send(res, 200, cards);
     }
 
     // ── PATCH: update Status by page ID ──────────────────────
@@ -66,12 +76,12 @@ module.exports = async (req, res) => {
       const { id, status } = body;
 
       if (!id || !status) {
-        return res.status(400).json({ error: 'id and status are required' });
+        return send(res, 400, { error: 'id and status are required' });
       }
 
       const validStatuses = ['Suggested', 'To Build', 'In Progress', 'Done'];
       if (!validStatuses.includes(status)) {
-        return res.status(400).json({ error: `status must be one of: ${validStatuses.join(', ')}` });
+        return send(res, 400, { error: `status must be one of: ${validStatuses.join(', ')}` });
       }
 
       await notion.pages.update({
@@ -81,13 +91,13 @@ module.exports = async (req, res) => {
         },
       });
 
-      return res.json({ ok: true, id, status });
+      return send(res, 200, { ok: true, id, status });
     }
 
-    return res.status(405).json({ error: 'Method not allowed' });
+    return send(res, 405, { error: 'Method not allowed' });
 
   } catch (err) {
     console.error('[api/roadmap]', err);
-    return res.status(500).json({ error: err.message });
+    return send(res, 500, { error: err.message });
   }
 };
