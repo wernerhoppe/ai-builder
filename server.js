@@ -26,7 +26,7 @@ if (fs.existsSync(envFile)) {
 
 const roadmapHandler = require('./api/roadmap');
 const PORT = process.env.PORT || 3001;
-const ROOT = __dirname;
+const ROOT = path.join(__dirname, 'public');
 
 // ── Static file helper ───────────────────────────────────────
 function serveFile(res, filePath) {
