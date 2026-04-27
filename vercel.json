@@ -1,7 +1,12 @@
 {
-  "buildCommand": "",
-  "outputDirectory": "public",
-  "rewrites": [
-    { "source": "/", "destination": "/ai-builder-dashboard.html" }
+  "version": 2,
+  "builds": [
+    { "src": "public/**", "use": "@vercel/static" },
+    { "src": "api/roadmap.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/roadmap", "dest": "/api/roadmap.js" },
+    { "src": "/", "dest": "/public/ai-builder-dashboard.html" },
+    { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }
