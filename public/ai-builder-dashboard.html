@@ -656,7 +656,7 @@ function renderBoard() {
       e.preventDefault();
       body.classList.remove('drag-over');
       const cardId = e.dataTransfer.getData('text/plain');
-      if (!cardId || !CARDS[cardId]) return;
+      if (!cardId || !CARDS_DATA[cardId]) return;
       moveCard(cardId, col.id);
     });
 
