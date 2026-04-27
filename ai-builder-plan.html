@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Werner Hoppe — AI Builder Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark:   #0D0E13;
+    --txt-d1:    #F3EDD3;
+    --txt-d2:    #FBF8F3;
+    --overlay:   #050505;
+    --surface-mid: #34394D;
+    --bg-light:  #E5E2DD;
+    --txt-l1:    #0D0E13;
+    --txt-l2:    #67625E;
+    --surface-card: #DCD8D3;
+    --accent:    #C8603D;
+    --btn-txt:   #FBF8F3;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--txt-d2);
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    font-weight: 400;
+    letter-spacing: -0.27px;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Container ── */
+  .inner { max-width: 1300px; margin: 0 auto; padding: 0 40px; }
+
+  /* ══════════════════════════
+     NAV
+  ══════════════════════════ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+    padding: 20px 0;
+    transition: background 0.35s ease, border-color 0.35s ease;
+    border-bottom: 1px solid transparent;
+  }
+  nav.default { background: transparent; }
+  nav.scrolled {
+    background: var(--bg-light);
+    border-bottom-color: rgba(13,14,19,0.1);
+  }
+
+  .nav-row {
+    max-width: 1300px; margin: 0 auto; padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-size: 13.5px; font-weight: 500; letter-spacing: -0.27px; transition: color 0.3s; }
+  nav.default  .nav-logo { color: var(--txt-d1); }
+  nav.scrolled .nav-logo { color: var(--txt-l1); }
+
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 13.5px; font-weight: 400; letter-spacing: -0.27px; transition: color 0.3s, opacity 0.2s; }
+  nav.default  .nav-links a { color: var(--txt-d1); opacity: 0.65; }
+  nav.scrolled .nav-links a { color: var(--txt-l1); opacity: 0.7; }
+  .nav-links a:hover { opacity: 1 !important; }
+
+  /* ══════════════════════════
+     HERO — DARK
+  ══════════════════════════ */
+  .hero {
+    background: var(--bg-dark);
+    min-height: 100vh;
+    display: flex; align-items: flex-end;
+    padding: 0 0 96px;
+  }
+  .hero-inner { max-width: 1300px; margin: 0 auto; padding: 0 40px; width: 100%; }
+
+  .hero-eyebrow {
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 32px;
+  }
+  .hero-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+
+  h1.display {
+    font-size: 106px; font-weight: 500; letter-spacing: -7px; line-height: 0.93;
+    color: var(--txt-d1);
+    margin-bottom: 56px;
+  }
+
+  .hero-bottom {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end;
+  }
+
+  .hero-goal {
+    font-size: 13.5px; font-weight: 400; letter-spacing: -0.27px; line-height: 1.6;
+    color: rgba(251,248,243,0.55); max-width: 480px;
+  }
+  .hero-goal strong { color: var(--txt-d1); font-weight: 500; }
+
+  .hero-meta { text-align: right; }
+  .hero-meta-row { margin-bottom: 6px; }
+  .hero-meta-label {
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+    color: rgba(243,237,211,0.3); display: block; margin-bottom: 3px;
+  }
+  .hero-meta-val { font-size: 13.5px; color: rgba(243,237,211,0.5); letter-spacing: -0.27px; }
+
+  /* ══════════════════════════
+     MARQUEE
+  ══════════════════════════ */
+  .marquee-wrap {
+    overflow: hidden; white-space: nowrap;
+    padding: 16px 0;
+    border-top: 1px solid; border-bottom: 1px solid;
+  }
+  .marquee-wrap.on-dark  { background: var(--bg-dark);  border-color: rgba(243,237,211,0.08); }
+  .marquee-wrap.on-light { background: var(--bg-light); border-color: rgba(13,14,19,0.09); }
+
+  .marquee-track { display: inline-block; animation: scroll-left 32s linear infinite; }
+  .marquee-track span {
+    display: inline; font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; padding: 0 40px;
+  }
+  .on-dark  .marquee-track span { color: rgba(243,237,211,0.22); }
+  .on-light .marquee-track span { color: rgba(13,14,19,0.2); }
+
+  @keyframes scroll-left {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ══════════════════════════
+     SECTION BASE
+  ══════════════════════════ */
+  .sec-light { background: var(--bg-light); padding: 115px 0; }
+  .sec-dark  { background: var(--bg-dark);  padding: 115px 0; }
+
+  .sec-eyebrow {
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
+  }
+  .sec-light .sec-eyebrow { color: rgba(13,14,19,0.4); }
+  .sec-dark  .sec-eyebrow { color: rgba(243,237,211,0.35); }
+  .sec-eyebrow::before { content: ''; width: 20px; height: 1px; }
+  .sec-light .sec-eyebrow::before { background: rgba(13,14,19,0.4); }
+  .sec-dark  .sec-eyebrow::before { background: rgba(243,237,211,0.35); }
+
+  h2.sec-title {
+    font-size: 59px; font-weight: 600; letter-spacing: -3.8px; line-height: 1.04;
+    margin-bottom: 14px;
+  }
+  .sec-light h2.sec-title { color: var(--txt-l1); }
+  .sec-dark  h2.sec-title { color: var(--txt-d1); }
+
+  .sec-sub {
+    font-size: 13.5px; font-weight: 400; letter-spacing: -0.27px; line-height: 1.55;
+    max-width: 500px; margin-bottom: 56px;
+  }
+  .sec-light .sec-sub { color: var(--txt-l2); }
+  .sec-dark  .sec-sub { color: rgba(251,248,243,0.45); }
+
+  /* ══════════════════════════
+     INSIGHT CARDS — light section
+  ══════════════════════════ */
+  .insight-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
+    background: rgba(13,14,19,0.1);
+    border: 1px solid rgba(13,14,19,0.1);
+  }
+
+  .ins-card {
+    background: var(--surface-card);
+    padding: 40px 36px 40px;
+    position: relative; overflow: hidden;
+  }
+  .ins-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 36px; right: 36px; height: 2px;
+    background: var(--accent); opacity: 0; transition: opacity 0.2s;
+  }
+  .ins-card:hover::after { opacity: 1; }
+
+  .ins-n {
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+    color: rgba(13,14,19,0.35); margin-bottom: 32px;
+  }
+  .ins-stat {
+    font-size: 80px; font-weight: 600; letter-spacing: -5px; line-height: 1;
+    color: var(--txt-l1); margin-bottom: 14px;
+  }
+  .ins-stat.ac { color: var(--accent); }
+  .ins-label {
+    font-size: 13.5px; font-weight: 500; letter-spacing: -0.27px;
+    color: var(--txt-l1); line-height: 1.35; margin-bottom: 12px;
+  }
+  .ins-body {
+    font-size: 13.5px; font-weight: 400; letter-spacing: -0.27px; line-height: 1.55;
+    color: var(--txt-l2);
+  }
+
+  /* Audit link button */
+  .ghost-btn-dark {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 44px;
+    padding: 11px 20px;
+    border: 1px solid var(--txt-l1);
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px; font-weight: 400; letter-spacing: -0.27px;
+    color: var(--txt-l1);
+    cursor: pointer;
+    border-radius: 0;
+    transition: background 0.18s, color 0.18s;
+  }
+  .ghost-btn-dark:hover { background: var(--txt-l1); color: var(--bg-light); }
+
+  /* ══════════════════════════
+     BUILD CARDS — dark section
+  ══════════════════════════ */
+  .build-stack { display: flex; flex-direction: column; gap: 1px; background: rgba(243,237,211,0.06); }
+
+  .build-card { background: var(--surface-mid); overflow: hidden; }
+
+  .build-top {
+    padding: 32px 40px 28px;
+    border-bottom: 1px solid rgba(243,237,211,0.06);
+  }
+  .build-meta {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 18px;
+  }
+  .build-rank-label {
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+    color: rgba(243,237,211,0.3);
+  }
+  .build-tags { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+  /* Tags */
+  .tag {
+    display: inline-block; border-radius: 9999px;
+    padding: 4px 10px;
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;
+  }
+  .tag-outline-light { border: 1px solid rgba(243,237,211,0.3); color: rgba(243,237,211,0.65); }
+  .tag-accent  { border: 1px solid rgba(200,96,61,0.5); color: var(--accent); }
+  .tag-outline-dark  { border: 1px solid rgba(13,14,19,0.35); color: var(--txt-l2); }
+  .tag-accent-light  { border: 1px solid rgba(200,96,61,0.5); color: var(--accent); }
+
+  .build-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid rgba(243,237,211,0.15);
+    border-radius: 9999px;
+    padding: 4px 10px;
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;
+    color: rgba(243,237,211,0.3);
+  }
+  .build-status-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(243,237,211,0.25); }
+
+  .build-outcome {
+    font-size: 17px; font-weight: 500; letter-spacing: -0.5px; line-height: 1.45;
+    color: var(--txt-d1);
+  }
+
+  .build-body { display: grid; grid-template-columns: 1fr 1fr; }
+  .build-col { padding: 26px 40px; }
+  .build-col + .build-col { border-left: 1px solid rgba(243,237,211,0.06); }
+  .build-col-hd {
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+    color: rgba(243,237,211,0.3); margin-bottom: 10px;
+  }
+  .build-col-body {
+    font-size: 13.5px; font-weight: 400; letter-spacing: -0.27px; line-height: 1.55;
+    color: rgba(251,248,243,0.55);
+  }
+  .build-foot {
+    padding: 14px 40px;
+    border-top: 1px solid rgba(243,237,211,0.06);
+    background: rgba(0,0,0,0.12);
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  }
+
+  /* Reclaim callout */
+  .reclaim {
+    margin-top: 40px;
+    padding: 24px 36px;
+    border: 1px solid rgba(200,96,61,0.25);
+    background: rgba(200,96,61,0.05);
+    font-size: 13.5px; letter-spacing: -0.27px; line-height: 1.6;
+    color: rgba(251,248,243,0.55);
+  }
+  .reclaim strong { color: var(--accent); font-weight: 500; }
+
+  /* ══════════════════════════
+     SPRINT CARDS — light section
+  ══════════════════════════ */
+  .sprint-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
+    background: rgba(13,14,19,0.1);
+  }
+
+  .sprint-card {
+    background: var(--surface-card);
+    padding: 36px 28px;
+    position: relative; overflow: hidden;
+  }
+  .sprint-card.upcoming {
+    opacity: 0.42;
+  }
+  .sprint-card.upcoming::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg, transparent, transparent 13px,
+      rgba(13,14,19,0.04) 13px, rgba(13,14,19,0.04) 14px
+    );
+    pointer-events: none;
+  }
+  .sprint-card.active {
+    background: var(--bg-dark);
+  }
+
+  .sprint-n {
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+    margin-bottom: 24px;
+  }
+  .sprint-card.upcoming .sprint-n { color: rgba(13,14,19,0.35); }
+  .sprint-card.active   .sprint-n { color: var(--accent); }
+
+  .sprint-icon { font-size: 22px; margin-bottom: 14px; display: block; }
+
+  .sprint-title {
+    font-size: 15px; font-weight: 500; letter-spacing: -0.4px; line-height: 1.35;
+    margin-bottom: 10px;
+  }
+  .sprint-card.upcoming .sprint-title { color: var(--txt-l1); }
+  .sprint-card.active   .sprint-title { color: var(--txt-d1); }
+
+  .sprint-body {
+    font-size: 13.5px; font-weight: 400; letter-spacing: -0.27px; line-height: 1.5;
+  }
+  .sprint-card.upcoming .sprint-body { color: var(--txt-l2); font-style: italic; }
+  .sprint-card.active   .sprint-body { color: rgba(251,248,243,0.5); }
+
+  .sprint-badge {
+    display: inline-block; margin-top: 18px;
+    border-radius: 9999px;
+    padding: 4px 10px;
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;
+    border: 1px solid rgba(200,96,61,0.45); color: var(--accent);
+  }
+
+  /* ══════════════════════════
+     FOOTER
+  ══════════════════════════ */
+  footer {
+    background: var(--overlay);
+    padding: 40px 0;
+    border-top: 1px solid rgba(243,237,211,0.05);
+  }
+  .foot-row {
+    max-width: 1300px; margin: 0 auto; padding: 0 40px;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
+  }
+  .foot-txt { font-size: 13.5px; letter-spacing: -0.27px; color: rgba(243,237,211,0.25); }
+  .foot-accent { color: var(--accent); }
+
+  /* ══════════════════════════
+     RESPONSIVE
+  ══════════════════════════ */
+  @media (max-width: 900px) {
+    h1.display    { font-size: 64px; letter-spacing: -4px; }
+    h2.sec-title  { font-size: 42px; letter-spacing: -2.5px; }
+    .ins-stat     { font-size: 60px; letter-spacing: -3.5px; }
+    .hero-bottom  { grid-template-columns: 1fr; }
+    .hero-meta    { text-align: left; }
+    .insight-grid { grid-template-columns: 1fr; }
+    .build-body   { grid-template-columns: 1fr; }
+    .build-col + .build-col { border-left: none; border-top: 1px solid rgba(243,237,211,0.06); }
+    .sprint-grid  { grid-template-columns: 1fr 1fr; }
+    .inner, .hero-inner, .nav-row { padding: 0 24px; }
+    .sec-light, .sec-dark { padding: 80px 0; }
+  }
+  @media (max-width: 600px) {
+    h1.display   { font-size: 52px; letter-spacing: -3px; }
+    h2.sec-title { font-size: 34px; letter-spacing: -2px; }
+    .sprint-grid { grid-template-columns: 1fr; }
+    .nav-links   { display: none; }
+    .hero        { padding-bottom: 64px; }
+    .build-top, .build-col, .build-foot { padding-left: 24px; padding-right: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="default" id="nav">
+  <div class="nav-row">
+    <span class="nav-logo">Werner Hoppe</span>
+    <div class="nav-links">
+      <a href="#insights">Time Summary</a>
+      <a href="#builds">What I'm Building</a>
+      <a href="#system">My System</a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ══ HERO — DARK ══ -->
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">AI Builder Automation Portfolio &nbsp;·&nbsp; Sprint 1</div>
+
+    <h1 class="display">
+      AI Builder<br>Plan
+    </h1>
+
+    <div class="hero-bottom">
+      <p class="hero-goal">
+        <strong>#1 Goal:</strong> Maintain a 4.0 GPA at BYU while building AI tools
+        that solve real problems in skilled nursing facilities.
+        Sprint 1 deliverable: a prioritized build roadmap grounded in real time-audit data.
+      </p>
+      <div class="hero-meta">
+        <div class="hero-meta-row">
+          <span class="hero-meta-label">Date</span>
+          <span class="hero-meta-val">April 23, 2026</span>
+        </div>
+        <div class="hero-meta-row">
+          <span class="hero-meta-label">Program</span>
+          <span class="hero-meta-val">Leland AI Builder · L2</span>
+        </div>
+        <div class="hero-meta-row" style="margin-top:16px;">
+          <span class="tag tag-accent" style="margin-right:6px;">5 Automations</span>
+          <span class="tag tag-outline-light">6 Sprints</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ MARQUEE: dark → light ══ -->
+<div class="marquee-wrap on-dark">
+  <div class="marquee-track">
+    <span>Sprint 1 Complete</span><span>·</span>
+    <span>Time Audit</span><span>·</span>
+    <span>AI Builder Portfolio</span><span>·</span>
+    <span>Werner Hoppe</span><span>·</span>
+    <span>5 Automations</span><span>·</span>
+    <span>PACS Group Inc.</span><span>·</span>
+    <span>BYU Finance</span><span>·</span>
+    <span>Leland AI Builder L2</span><span>·</span>
+    <span>Sprint 1 Complete</span><span>·</span>
+    <span>Time Audit</span><span>·</span>
+    <span>AI Builder Portfolio</span><span>·</span>
+    <span>Werner Hoppe</span><span>·</span>
+    <span>5 Automations</span><span>·</span>
+    <span>PACS Group Inc.</span><span>·</span>
+    <span>BYU Finance</span><span>·</span>
+    <span>Leland AI Builder L2</span><span>·</span>
+  </div>
+</div>
+
+
+<!-- ══ TIME SUMMARY — LIGHT ══ -->
+<section class="sec-light" id="insights">
+  <div class="inner">
+    <div class="sec-eyebrow">From the Time Audit</div>
+    <h2 class="sec-title">What the data<br>actually says</h2>
+    <p class="sec-sub">Three findings that changed how I see my time. Every build decision below is anchored to one of these.</p>
+
+    <div class="insight-grid">
+
+      <div class="ins-card">
+        <div class="ins-n">Finding 01</div>
+        <div class="ins-stat ac">105×</div>
+        <div class="ins-label">App switches per day — 2.5× the knowledge worker norm</div>
+        <div class="ins-body">Messages alone clocked 113 sessions; Finder hit 125. April 10 peaked at 272 switches — the same day tax admin exploded. High context-switching during finals costs the most because deep study requires sustained focus, not bursts.</div>
+      </div>
+
+      <div class="ins-card">
+        <div class="ins-n">Finding 02</div>
+        <div class="ins-stat">~12h</div>
+        <div class="ins-label">Lost to tax admin — during finals week</div>
+        <div class="ins-body">TaxDome (59 visits), IRS.gov (33), recovering a former employer's payroll login (4 emails, account locked), CPA messages — all hit the same week as FIN 201 and ECON 110 finals. Entirely avoidable. Repeats every year unless automated.</div>
+      </div>
+
+      <div class="ins-card">
+        <div class="ins-n">Finding 03</div>
+        <div class="ins-stat">14+</div>
+        <div class="ins-label">Inbound emails per day — &lt;1 sent per week</div>
+        <div class="ins-body">Morning Brew, Finimize, Investopedia ×2, Robinhood Snacks, Healthcare Brew, plus 8+ LinkedIn pings daily. Fewer than 3 real emails sent this month. The inbox is a passive consumption machine — daily attention tax, near-zero ROI toward PACS or GPA.</div>
+      </div>
+
+    </div>
+
+    <a href="time-audit.html" class="ghost-btn-dark">
+      <span>📊</span>
+      <span>Full Time Audit — all sources, diagnostics, and data</span>
+      <span>→</span>
+    </a>
+  </div>
+</section>
+
+
+<!-- ══ MARQUEE: light → dark ══ -->
+<div class="marquee-wrap on-light">
+  <div class="marquee-track">
+    <span>Email Inbox Triage</span><span>·</span>
+    <span>SNF Referral Parser</span><span>·</span>
+    <span>Flashcard Generator</span><span>·</span>
+    <span>Weekly News Digest</span><span>·</span>
+    <span>Tax Prep Checklist</span><span>·</span>
+    <span>Quick Win</span><span>·</span>
+    <span>Medium Lift</span><span>·</span>
+    <span>5–6 hrs reclaimed per week</span><span>·</span>
+    <span>Email Inbox Triage</span><span>·</span>
+    <span>SNF Referral Parser</span><span>·</span>
+    <span>Flashcard Generator</span><span>·</span>
+    <span>Weekly News Digest</span><span>·</span>
+    <span>Tax Prep Checklist</span><span>·</span>
+    <span>Quick Win</span><span>·</span>
+    <span>Medium Lift</span><span>·</span>
+    <span>5–6 hrs reclaimed per week</span><span>·</span>
+  </div>
+</div>
+
+
+<!-- ══ WHAT I'M BUILDING — DARK ══ -->
+<section class="sec-dark" id="builds">
+  <div class="inner">
+    <div class="sec-eyebrow">Build Roadmap</div>
+    <h2 class="sec-title">What I'm<br>building</h2>
+    <p class="sec-sub">Five automations ranked by impact: hours reclaimed × alignment with the top goal. Highest first.</p>
+
+    <div class="build-stack">
+
+      <!-- ── #1: Email Inbox Triage ── -->
+      <div class="build-card">
+        <div class="build-top">
+          <div class="build-meta">
+            <span class="build-rank-label">#1 — Highest Impact</span>
+            <div class="build-tags">
+              <span class="tag tag-accent">Quick Win · &lt;2 hrs</span>
+              <span class="tag tag-outline-light">1.5 hrs/week reclaimed</span>
+              <div class="build-status"><span class="build-status-dot"></span>Not started</div>
+            </div>
+          </div>
+          <div class="build-outcome">My inbox processes itself — I open Gmail and see only the 3 messages that actually need me, not 30.</div>
+        </div>
+        <div class="build-body">
+          <div class="build-col">
+            <div class="build-col-hd">What's happening today</div>
+            <div class="build-col-body">14+ emails arrive daily: 6 newsletters, 8+ LinkedIn pings, bank alerts, promotions. I spend 15–20 min/day triaging — even when 95% is noise. My 3 real sent emails this month were buried under 400+ received. The inbox is a one-way flood.</div>
+          </div>
+          <div class="build-col">
+            <div class="build-col-hd">What the automated version looks like</div>
+            <div class="build-col-body">Gmail filters auto-label and archive newsletters and LinkedIn notifications. Claude scans new email daily, surfaces only messages requiring a response, and drafts replies for the 1–2 that need one. Optional: a daily 3-line digest of anything worth knowing.</div>
+          </div>
+        </div>
+        <div class="build-foot">
+          <span class="tag tag-accent">Quick Win</span>
+          <span class="tag tag-outline-light">Gmail MCP already connected</span>
+          <span class="tag tag-outline-light">Immediate — build this week</span>
+        </div>
+      </div>
+
+      <!-- ── #2: SNF Referral Parser ── -->
+      <div class="build-card">
+        <div class="build-top">
+          <div class="build-meta">
+            <span class="build-rank-label">#2 — Highest PACS Impact</span>
+            <div class="build-tags">
+              <span class="tag tag-accent">Medium Lift · ~4 hrs</span>
+              <span class="tag tag-outline-light">30+ hrs/week reclaimed at PACS</span>
+              <div class="build-status"><span class="build-status-dot"></span>Not started</div>
+            </div>
+          </div>
+          <div class="build-outcome">I walk into the PACS summer internship with a working SNF referral parser — not a pitch deck about building one.</div>
+        </div>
+        <div class="build-body">
+          <div class="build-col">
+            <div class="build-col-hd">What's happening today</div>
+            <div class="build-col-body">PACS admissions staff manually parse 50+ page hospital referral PDFs — diagnosis, insurance, care needs, red flags. Each one takes 30–60 minutes. Zero PACS-specific build blocks in my current time data. The tool is fully buildable with Claude today, but hasn't been started.</div>
+          </div>
+          <div class="build-col">
+            <div class="build-col-hd">What the automated version looks like</div>
+            <div class="build-col-body">Admissions uploads a referral PDF. Claude extracts diagnosis, insurance type, care needs, red flags, and response priority. Output: a 1-page structured summary ready in under 60 seconds. Building this now means walking into June with a live demo, not a slide.</div>
+          </div>
+        </div>
+        <div class="build-foot">
+          <span class="tag tag-accent">Medium Lift</span>
+          <span class="tag tag-outline-light">Highest PACS alignment</span>
+          <span class="tag tag-outline-light">Build before summer</span>
+        </div>
+      </div>
+
+      <!-- ── #3: Flashcard Generator ── -->
+      <div class="build-card">
+        <div class="build-top">
+          <div class="build-meta">
+            <span class="build-rank-label">#3 — Direct GPA Impact</span>
+            <div class="build-tags">
+              <span class="tag tag-accent">Quick Win · &lt;1 hr</span>
+              <span class="tag tag-outline-light">2 hrs/week reclaimed (school)</span>
+              <div class="build-status"><span class="build-status-dot"></span>Not started</div>
+            </div>
+          </div>
+          <div class="build-outcome">My flashcard decks are ready before I sit down — generated in 2 minutes from whatever I'm studying, not built during the study block itself.</div>
+        </div>
+        <div class="build-body">
+          <div class="build-col">
+            <div class="build-col-hd">What's happening today</div>
+            <div class="build-col-body">Calendar had 5+ explicit "flashcard" sessions: "flash cards lunch," "FIN 201 flashcards + final outline," "Econ cumulative portion review (flashcards and practice tests)." Card-making is baked into study blocks, stealing 30–45 min of actual study time per session.</div>
+          </div>
+          <div class="build-col">
+            <div class="build-col-hd">What the automated version looks like</div>
+            <div class="build-col-body">Upload a lecture PDF or paste notes → Claude generates a complete, Anki-formatted Q&A deck in under 2 minutes. Also works from textbook chapter URLs. Output: ready-to-import deck or a printable study sheet. Triggered by uploading any study material.</div>
+          </div>
+        </div>
+        <div class="build-foot">
+          <span class="tag tag-accent">Quick Win</span>
+          <span class="tag tag-outline-light">Directly supports 4.0 goal</span>
+          <span class="tag tag-outline-light">Most useful next semester</span>
+        </div>
+      </div>
+
+      <!-- ── #4: Weekly News Digest ── -->
+      <div class="build-card">
+        <div class="build-top">
+          <div class="build-meta">
+            <span class="build-rank-label">#4 — Attention Recovery</span>
+            <div class="build-tags">
+              <span class="tag tag-accent">Medium Lift · ~3 hrs</span>
+              <span class="tag tag-outline-light">1 hr/week reclaimed</span>
+              <div class="build-status"><span class="build-status-dot"></span>Not started</div>
+            </div>
+          </div>
+          <div class="build-outcome">I spend 5 minutes on Friday reviewing one AI-curated brief — not an hour grazing six newsletters and LinkedIn.</div>
+        </div>
+        <div class="build-body">
+          <div class="build-col">
+            <div class="build-col-hd">What's happening today</div>
+            <div class="build-col-body">Six newsletters daily (Morning Brew, Finimize, Investopedia ×2, Robinhood Snacks, Healthcare Brew) + LinkedIn job alerts + Coinbase/Robinhood pings = ~30 emails/day of ambient noise. Signal I actually want is buried in promotional content.</div>
+          </div>
+          <div class="build-col">
+            <div class="build-col-hd">What the automated version looks like</div>
+            <div class="build-col-body">Scheduled Claude agent reads inbox every Friday morning, synthesizes a 5-bullet weekly digest filtered for: (1) healthcare/SNF relevance, (2) AI tools, (3) finance tied to coursework. Delivered as one email. All original newsletters auto-archived after processing.</div>
+          </div>
+        </div>
+        <div class="build-foot">
+          <span class="tag tag-accent">Medium Lift</span>
+          <span class="tag tag-outline-light">Gmail MCP already connected</span>
+          <span class="tag tag-outline-light">Pair with #1 inbox cleanup</span>
+        </div>
+      </div>
+
+      <!-- ── #5: Tax Prep Checklist ── -->
+      <div class="build-card">
+        <div class="build-top">
+          <div class="build-meta">
+            <span class="build-rank-label">#5 — Annual Time Recovery</span>
+            <div class="build-tags">
+              <span class="tag tag-accent">Quick Win · &lt;2 hrs</span>
+              <span class="tag tag-outline-light">~10 hrs reclaimed/year</span>
+              <div class="build-status"><span class="build-status-dot"></span>Not started</div>
+            </div>
+          </div>
+          <div class="build-outcome">Tax season takes 2 hours in February instead of 12 hours during finals week — every document is organized when I need it.</div>
+        </div>
+        <div class="build-body">
+          <div class="build-col">
+            <div class="build-col-hd">What's happening today</div>
+            <div class="build-col-body">~12 hours of reactive tax work hit during finals week: TaxDome (59 visits), IRS.gov (33 visits), recovering a prior employer's payroll login (4 emails, account locked), CPA back-and-forth. Undocumented, unplanned, and collision-timed with FIN 201 and ECON 110 finals.</div>
+          </div>
+          <div class="build-col">
+            <div class="build-col-hd">What the automated version looks like</div>
+            <div class="build-col-body">A scheduled Claude agent fires every February 1st, emails a checklist of every document needed (W-2s, 1099s, prior-year returns, business expenses, login credentials) with the correct portal for each. Takes 20 min to set up once. No firefighting during finals. Ever again.</div>
+          </div>
+        </div>
+        <div class="build-foot">
+          <span class="tag tag-accent">Quick Win</span>
+          <span class="tag tag-outline-light">Set-and-forget annual trigger</span>
+          <span class="tag tag-outline-light">Prevents finals-week collisions</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="reclaim">
+      <strong>Total estimated weekly reclaim: ~5–6 hours.</strong> The biggest single lever isn't calendar optimization (zero meetings to cut) — it's cleaning up the information diet (#1, #4) and turning AI skills toward the actual PACS use cases (#2) before summer starts.
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ MARQUEE: dark → light ══ -->
+<div class="marquee-wrap on-dark">
+  <div class="marquee-track">
+    <span>Sprint 1</span><span>·</span>
+    <span>Time Audit + Automation Plan</span><span>·</span>
+    <span>Sprint 2</span><span>·</span>
+    <span>Deployed Website</span><span>·</span>
+    <span>Sprint 3</span><span>·</span>
+    <span>Automated Workflows</span><span>·</span>
+    <span>Sprint 4</span><span>·</span>
+    <span>Knowledge Wiki</span><span>·</span>
+    <span>Sprint 5</span><span>·</span>
+    <span>Agentic Workflow</span><span>·</span>
+    <span>Sprint 6</span><span>·</span>
+    <span>Eval System</span><span>·</span>
+    <span>Sprint 1</span><span>·</span>
+    <span>Time Audit + Automation Plan</span><span>·</span>
+    <span>Sprint 2</span><span>·</span>
+    <span>Deployed Website</span><span>·</span>
+    <span>Sprint 3</span><span>·</span>
+    <span>Automated Workflows</span><span>·</span>
+    <span>Sprint 4</span><span>·</span>
+    <span>Knowledge Wiki</span><span>·</span>
+    <span>Sprint 5</span><span>·</span>
+    <span>Agentic Workflow</span><span>·</span>
+    <span>Sprint 6</span><span>·</span>
+    <span>Eval System</span><span>·</span>
+  </div>
+</div>
+
+
+<!-- ══ MY SYSTEM — LIGHT ══ -->
+<section class="sec-light" id="system">
+  <div class="inner">
+    <div class="sec-eyebrow">The Full Arc</div>
+    <h2 class="sec-title">My system</h2>
+    <p class="sec-sub">Six sprints. Each one builds on the last. Sprint 1 is complete — the rest are coming.</p>
+
+    <div class="sprint-grid">
+
+      <div class="sprint-card active">
+        <div class="sprint-n">Sprint 1 — Active</div>
+        <span class="sprint-icon">📊</span>
+        <div class="sprint-title">Time Audit + Automation Plan</div>
+        <div class="sprint-body">Built CLAUDE.md, ran a full data-backed time audit across 5 sources, and produced a prioritized build roadmap.</div>
+        <span class="sprint-badge">Complete</span>
+      </div>
+
+      <div class="sprint-card upcoming">
+        <div class="sprint-n">Sprint 2</div>
+        <span class="sprint-icon">🌐</span>
+        <div class="sprint-title">Deployed Website + Data Collection Tool</div>
+        <div class="sprint-body">Coming in Sprint 2</div>
+      </div>
+
+      <div class="sprint-card upcoming">
+        <div class="sprint-n">Sprint 3</div>
+        <span class="sprint-icon">⚙️</span>
+        <div class="sprint-title">Automated Workflow (n8n or Claude Routines)</div>
+        <div class="sprint-body">Coming in Sprint 3</div>
+      </div>
+
+      <div class="sprint-card upcoming">
+        <div class="sprint-n">Sprint 4</div>
+        <span class="sprint-icon">🧠</span>
+        <div class="sprint-title">Knowledge Wiki Context System</div>
+        <div class="sprint-body">Coming in Sprint 4</div>
+      </div>
+
+      <div class="sprint-card upcoming">
+        <div class="sprint-n">Sprint 5</div>
+        <span class="sprint-icon">🤖</span>
+        <div class="sprint-title">Custom Agentic Workflow</div>
+        <div class="sprint-body">Coming in Sprint 5</div>
+      </div>
+
+      <div class="sprint-card upcoming">
+        <div class="sprint-n">Sprint 6</div>
+        <span class="sprint-icon">✅</span>
+        <div class="sprint-title">Eval System (Tested &amp; Documented)</div>
+        <div class="sprint-body">Coming in Sprint 6</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="foot-row">
+    <span class="foot-txt">AI Builder Automation Portfolio — April 23, 2026 &nbsp;·&nbsp; Built in <span class="foot-accent">L2</span></span>
+    <span class="foot-txt">Werner Hoppe &nbsp;·&nbsp; Leland AI Builder</span>
+  </div>
+</footer>
+
+
+<script>
+  // Nav scroll toggle
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.className = window.scrollY > 60 ? 'scrolled' : 'default';
+  }, { passive: true });
+</script>
+
+</body>
+</html>

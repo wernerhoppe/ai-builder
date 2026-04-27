@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Werner Hoppe — Automation Kanban</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark:      #0D0E13;
+    --txt-d1:       #F3EDD3;
+    --txt-d2:       #FBF8F3;
+    --overlay:      #050505;
+    --surface-mid:  #34394D;
+    --bg-light:     #E5E2DD;
+    --txt-l1:       #0D0E13;
+    --txt-l2:       #67625E;
+    --surface-card: #DCD8D3;
+    --accent:       #C8603D;
+    --btn-txt:      #FBF8F3;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--txt-d2);
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    font-weight: 400;
+    letter-spacing: -0.27px;
+    line-height: 1.5;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ══ NAV ══ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+    padding: 18px 0;
+    background: rgba(13,14,19,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(243,237,211,0.07);
+  }
+  .nav-row {
+    max-width: 1440px; margin: 0 auto; padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-size: 13.5px; font-weight: 500; letter-spacing: -0.27px; color: var(--txt-d1); }
+  .nav-right { display: flex; align-items: center; gap: 24px; }
+  .nav-link {
+    font-size: 13.5px; font-weight: 400; letter-spacing: -0.27px;
+    color: rgba(243,237,211,0.45); transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--txt-d1); }
+  .nav-badge {
+    background: rgba(200,96,61,0.12);
+    border: 1px solid rgba(200,96,61,0.28);
+    border-radius: 9999px;
+    padding: 3px 10px;
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  /* ══ PAGE HEADER ══ */
+  .page-header {
+    max-width: 1440px; margin: 0 auto;
+    padding: 96px 40px 28px;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 24px;
+    flex-wrap: wrap;
+  }
+  .header-left {}
+  .header-eyebrow {
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .header-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--accent); }
+  .header-title {
+    font-size: 42px; font-weight: 600; letter-spacing: -2.8px; line-height: 1.08;
+    color: var(--txt-d1);
+  }
+  .header-sub {
+    font-size: 13.5px; font-weight: 400; letter-spacing: -0.27px; line-height: 1.55;
+    color: rgba(251,248,243,0.38);
+    max-width: 400px; margin-top: 10px;
+  }
+  .header-right { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+  .ghost-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    border: 1px solid rgba(243,237,211,0.14);
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px; font-weight: 400; letter-spacing: -0.27px;
+    color: rgba(243,237,211,0.4);
+    cursor: pointer;
+    border-radius: 0;
+    transition: border-color 0.18s, color 0.18s;
+  }
+  .ghost-btn:hover { border-color: rgba(243,237,211,0.35); color: var(--txt-d1); }
+
+  /* ══ DIVIDER ══ */
+  .hbar {
+    height: 1px;
+    background: rgba(243,237,211,0.07);
+    max-width: calc(1440px - 80px);
+    margin: 0 auto;
+  }
+
+  /* ══ BOARD ══ */
+  .board {
+    max-width: 1440px; margin: 0 auto;
+    padding: 24px 40px 64px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+
+  /* ══ COLUMN ══ */
+  .column { display: flex; flex-direction: column; }
+
+  .col-head {
+    padding: 13px 15px 11px;
+    border: 1px solid rgba(243,237,211,0.08);
+    border-bottom: none;
+    background: rgba(255,255,255,0.025);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .col-head-left { display: flex; align-items: center; gap: 9px; }
+
+  .col-indicator { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  .col-label {
+    font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em;
+  }
+
+  .col-count {
+    font-size: 10px; font-weight: 600;
+    background: rgba(243,237,211,0.07);
+    border-radius: 9999px;
+    padding: 2px 9px; min-width: 26px; text-align: center;
+    color: rgba(243,237,211,0.35);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .col-body {
+    border: 1px solid rgba(243,237,211,0.08);
+    border-top: 1px solid rgba(243,237,211,0.04);
+    padding: 10px;
+    display: flex; flex-direction: column; gap: 8px;
+    min-height: 130px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .col-body.drag-over {
+    background: rgba(200,96,61,0.06);
+    border-color: rgba(200,96,61,0.32);
+  }
+
+  /* ── Column: Suggested — muted ── */
+  .col-suggested .col-head {
+    background: rgba(255,255,255,0.01);
+    border-color: rgba(243,237,211,0.04);
+    border-bottom: none;
+  }
+  .col-suggested .col-body {
+    background: rgba(255,255,255,0.01);
+    border-color: rgba(243,237,211,0.04);
+    border-style: dashed;
+    border-top-style: dashed;
+  }
+  .col-suggested .col-body.drag-over {
+    background: rgba(200,96,61,0.04);
+    border-color: rgba(200,96,61,0.2);
+    border-style: dashed;
+  }
+  .col-suggested .col-indicator { background: rgba(243,237,211,0.18); }
+  .col-suggested .col-label     { color: rgba(243,237,211,0.22); }
+  .col-suggested .col-count     { background: rgba(243,237,211,0.03); color: rgba(243,237,211,0.15); }
+
+  /* ── Column: To Build ── */
+  .col-tobuild .col-indicator { background: rgba(243,237,211,0.42); }
+  .col-tobuild .col-label     { color: rgba(243,237,211,0.48); }
+
+  /* ── Column: In Progress ── */
+  .col-inprogress .col-head   { border-top: 2px solid rgba(200,96,61,0.55); }
+  .col-inprogress .col-indicator { background: var(--accent); }
+  .col-inprogress .col-label  { color: rgba(200,96,61,0.9); }
+  .col-inprogress .col-count  { background: rgba(200,96,61,0.1); color: var(--accent); }
+
+  /* ── Column: Done ── */
+  .col-done .col-indicator { background: #5CAF7D; }
+  .col-done .col-label     { color: rgba(92,175,125,0.65); }
+  .col-done .col-count     { background: rgba(92,175,125,0.1); color: rgba(92,175,125,0.65); }
+
+  /* ══ EMPTY STATE ══ */
+  .empty-label {
+    padding: 30px 0;
+    text-align: center;
+    font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+    color: rgba(243,237,211,0.1);
+    pointer-events: none;
+    user-select: none;
+    border: 1px dashed rgba(243,237,211,0.06);
+    margin: 2px 0;
+  }
+  .col-suggested .empty-label {
+    color: rgba(243,237,211,0.07);
+    border-color: rgba(243,237,211,0.04);
+  }
+
+  /* ══ KANBAN CARD ══ */
+  .k-card {
+    background: var(--surface-mid);
+    border: 1px solid rgba(243,237,211,0.07);
+    padding: 15px 16px 13px;
+    cursor: grab;
+    transition: border-color 0.14s, transform 0.1s, box-shadow 0.14s, opacity 0.14s;
+    user-select: none;
+    position: relative;
+  }
+  .k-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: transparent;
+    transition: background 0.14s;
+  }
+  .k-card:hover {
+    border-color: rgba(243,237,211,0.18);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.38);
+    transform: translateY(-2px);
+  }
+  .k-card:hover::before { background: var(--accent); }
+  .k-card:active { cursor: grabbing; }
+  .k-card.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+    transform: rotate(1.5deg) scale(1.03);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+
+  .col-done .k-card { opacity: 0.55; }
+  .col-done .k-card:hover { opacity: 0.82; }
+  .col-done .k-card::before { background: rgba(92,175,125,0.5) !important; }
+
+  .col-suggested .k-card {
+    background: rgba(52,57,77,0.38);
+    border-color: rgba(243,237,211,0.04);
+  }
+
+  /* Card internals */
+  .k-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 10px; margin-bottom: 7px;
+  }
+  .k-name {
+    font-size: 13.5px; font-weight: 500; letter-spacing: -0.3px; line-height: 1.35;
+    color: var(--txt-d1); flex: 1;
+  }
+  .k-priority {
+    display: inline-flex; align-items: center; gap: 4px;
+    border-radius: 9999px;
+    padding: 3px 8px;
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .pri-high   { border: 1px solid rgba(200,96,61,0.42); color: var(--accent); }
+  .pri-medium { border: 1px solid rgba(243,237,211,0.18); color: rgba(243,237,211,0.48); }
+  .pri-low    { border: 1px solid rgba(243,237,211,0.1);  color: rgba(243,237,211,0.24); }
+
+  .pri-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+  .pri-high   .pri-dot { background: var(--accent); }
+  .pri-medium .pri-dot { background: rgba(243,237,211,0.42); }
+  .pri-low    .pri-dot { background: rgba(243,237,211,0.2); }
+
+  .k-desc {
+    font-size: 12px; font-weight: 400; letter-spacing: -0.18px; line-height: 1.5;
+    color: rgba(251,248,243,0.38);
+  }
+  .k-foot {
+    margin-top: 11px; padding-top: 9px;
+    border-top: 1px solid rgba(243,237,211,0.06);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .k-tag {
+    display: inline-block;
+    border: 1px solid rgba(243,237,211,0.09);
+    border-radius: 9999px;
+    padding: 2px 7px;
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;
+    color: rgba(243,237,211,0.28);
+  }
+  .k-grip {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2.5px;
+    opacity: 0.18; transition: opacity 0.14s;
+    cursor: grab;
+  }
+  .k-card:hover .k-grip { opacity: 0.45; }
+  .k-grip-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--txt-d2); }
+
+  /* ══ FOOTER ══ */
+  footer {
+    background: var(--overlay);
+    padding: 26px 0;
+    border-top: 1px solid rgba(243,237,211,0.05);
+  }
+  .foot-row {
+    max-width: 1440px; margin: 0 auto; padding: 0 40px;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  }
+  .foot-txt { font-size: 13.5px; letter-spacing: -0.27px; color: rgba(243,237,211,0.22); }
+  .foot-accent { color: var(--accent); }
+  .foot-link { color: rgba(243,237,211,0.38); transition: color 0.18s; }
+  .foot-link:hover { color: var(--txt-d1); }
+
+  /* ══ RESPONSIVE ══ */
+  @media (max-width: 1000px) {
+    .board { grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px 24px 48px; }
+    .page-header { padding: 88px 24px 24px; }
+    .hbar { max-width: calc(100% - 48px); }
+    .header-title { font-size: 34px; letter-spacing: -2px; }
+  }
+  @media (max-width: 600px) {
+    .board { grid-template-columns: 1fr; padding: 16px 16px 40px; }
+    .page-header { padding: 80px 16px 20px; flex-direction: column; align-items: flex-start; }
+    .hbar { max-width: calc(100% - 32px); }
+    .nav-row { padding: 0 20px; }
+    .header-title { font-size: 28px; letter-spacing: -1.6px; }
+    .foot-row { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-row">
+    <span class="nav-logo">Werner Hoppe</span>
+    <div class="nav-right">
+      <a href="ai-builder-plan.html" class="nav-link">← Back to Plan</a>
+      <span class="nav-badge">Sprint 1</span>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ══ PAGE HEADER ══ -->
+<div class="page-header">
+  <div class="header-left">
+    <div class="header-eyebrow">Automation Roadmap</div>
+    <h1 class="header-title">Automation<br>Kanban</h1>
+    <p class="header-sub">Drag cards between columns as you build. Progress saves automatically in your browser.</p>
+  </div>
+  <div class="header-right">
+    <button class="ghost-btn" id="resetBtn">↺ &nbsp; Reset to default</button>
+  </div>
+</div>
+
+<div class="hbar"></div>
+
+
+<!-- ══ KANBAN BOARD ══ -->
+<div class="board" id="board"></div>
+
+
+<!-- ══ FOOTER ══ -->
+<!-- ══ BUILD PLANS ══ -->
+<div class="bp-section">
+  <div class="bp-inner">
+    <div class="bp-header">
+      <div class="header-eyebrow" style="margin-bottom:10px;">Scoped Builds</div>
+      <h2 class="bp-title">Build Plans</h2>
+      <p class="bp-sub">Detailed plans for items moved to In Progress. Sub-builds, starting prompts, and scope boundaries.</p>
+    </div>
+
+    <div class="bp-grid">
+
+      <!-- Flashcard Generator -->
+      <div class="k-card bp-card">
+        <div class="k-top" style="margin-bottom:12px;">
+          <span class="k-name">Flashcard Generator</span>
+          <span class="k-priority pri-medium"><span class="pri-dot"></span>In Progress</span>
+        </div>
+
+        <div class="bp-what">
+          <div class="bp-section-label">What this builds</div>
+          <div class="k-desc" style="color:rgba(251,248,243,0.55);">Paste class notes → Claude generates Q&amp;A pairs in tab-separated format, ready to import directly into Quizlet. Quizlet's Learn mode handles spaced repetition. Notes to studyable deck in under 2 minutes, no card-writing.</div>
+        </div>
+
+        <div class="bp-sub-builds">
+          <div class="bp-section-label" style="margin-top:16px;">Sub-builds</div>
+          <div class="bp-build-row">
+            <span class="bp-build-num">1</span>
+            <div>
+              <div class="bp-build-title">Notes → Quizlet deck</div>
+              <div class="k-desc">Paste any text → 10–15 cards in <code>question[TAB]answer</code> format. Done when FIN 201 notes produce importable cards with no editing.</div>
+            </div>
+          </div>
+          <div class="bp-build-row bp-upcoming">
+            <span class="bp-build-num" style="opacity:0.35;">2</span>
+            <div style="opacity:0.35;">
+              <div class="bp-build-title">PDF support</div>
+              <div class="k-desc">Upload a lecture PDF instead of pasting text.</div>
+            </div>
+          </div>
+          <div class="bp-build-row bp-upcoming">
+            <span class="bp-build-num" style="opacity:0.35;">3</span>
+            <div style="opacity:0.35;">
+              <div class="bp-build-title">Subject-aware card rules</div>
+              <div class="k-desc">Finance / econ flags to prioritize the right concept types per course.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="k-foot" style="margin-top:16px; flex-wrap:wrap; gap:6px;">
+          <span class="k-tag">Quick Win · GPA</span>
+          <span class="k-tag">Sub-build 1: 10 min</span>
+          <span class="k-tag">Out of v1: PDF, Anki .apkg, scheduling</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .bp-section {
+    background: var(--bg-light);
+    padding: 80px 0 64px;
+    border-top: 1px solid rgba(13,14,19,0.08);
+  }
+  .bp-inner {
+    max-width: 1440px; margin: 0 auto; padding: 0 40px;
+  }
+  .bp-title {
+    font-size: 42px; font-weight: 600; letter-spacing: -2.8px; line-height: 1.08;
+    color: var(--txt-l1); margin-bottom: 8px;
+  }
+  .bp-sub {
+    font-size: 13.5px; font-weight: 400; letter-spacing: -0.27px; line-height: 1.55;
+    color: var(--txt-l2); max-width: 500px; margin-bottom: 40px;
+  }
+  .bp-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px;
+  }
+  .bp-card {
+    background: var(--bg-dark) !important;
+    border-color: rgba(243,237,211,0.08) !important;
+    cursor: default !important;
+    padding: 22px 24px 18px !important;
+  }
+  .bp-card:hover { transform: none !important; }
+  .bp-card:hover::before { background: rgba(200,96,61,0.5) !important; }
+  .bp-section-label {
+    font-size: 8.4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+    color: rgba(243,237,211,0.28); margin-bottom: 6px;
+  }
+  .bp-build-row {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid rgba(243,237,211,0.05);
+  }
+  .bp-build-row:last-child { border-bottom: none; }
+  .bp-build-num {
+    font-size: 10px; font-weight: 600; color: var(--accent);
+    background: rgba(200,96,61,0.1); border: 1px solid rgba(200,96,61,0.2);
+    border-radius: 9999px; width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .bp-build-title {
+    font-size: 13px; font-weight: 500; letter-spacing: -0.25px;
+    color: var(--txt-d1); margin-bottom: 3px;
+  }
+  .bp-card code {
+    font-size: 11px; background: rgba(243,237,211,0.07);
+    padding: 1px 5px; border-radius: 3px; font-family: monospace;
+    color: rgba(243,237,211,0.6);
+  }
+  @media (max-width: 600px) {
+    .bp-section { padding: 48px 0 40px; }
+    .bp-inner { padding: 0 16px; }
+    .bp-title { font-size: 28px; letter-spacing: -1.6px; }
+    .bp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-txt">AI Builder Automation Portfolio — April 23, 2026 &nbsp;·&nbsp; Built in <span class="foot-accent">L2</span></span>
+    <span class="foot-txt">Synced with Notion &nbsp;·&nbsp; <a href="ai-builder-plan.html" class="foot-link">View full plan →</a></span>
+  </div>
+</footer>
+
+
+<script>
+// ── STATUS ↔ COLUMN MAPPINGS ────────────────────────────────
+const STATUS_TO_COL = {
+  'Suggested':   'suggested',
+  'To Build':    'toBuild',
+  'In Progress': 'inProgress',
+  'Done':        'done',
+};
+const COL_TO_STATUS = {
+  suggested:  'Suggested',
+  toBuild:    'To Build',
+  inProgress: 'In Progress',
+  done:       'Done',
+};
+
+// ── COLUMN DEFINITIONS ──────────────────────────────────────
+const COLUMNS = [
+  { id: 'suggested',   label: 'Suggested',   cls: 'col-suggested',   emptyText: 'Drop ideas here' },
+  { id: 'toBuild',     label: 'To Build',     cls: 'col-tobuild',     emptyText: 'Empty' },
+  { id: 'inProgress',  label: 'In Progress',  cls: 'col-inprogress',  emptyText: 'Nothing in progress' },
+  { id: 'done',        label: 'Done',         cls: 'col-done',        emptyText: 'Nothing shipped yet' }
+];
+
+// ── RUNTIME STATE ───────────────────────────────────────────
+let CARDS_DATA = {};  // { notionId: { name, status, priority, description, tag } }
+let STATE = { suggested: [], toBuild: [], inProgress: [], done: [] };
+
+// ── API HELPERS ─────────────────────────────────────────────
+async function loadRoadmap() {
+  showLoading();
+  try {
+    const res = await fetch('/api/roadmap');
+    if (!res.ok) throw new Error(`HTTP ${res.status} from /api/roadmap`);
+    const cards = await res.json();
+
+    STATE = { suggested: [], toBuild: [], inProgress: [], done: [] };
+    CARDS_DATA = {};
+
+    cards.forEach(card => {
+      CARDS_DATA[card.id] = card;
+      const col = STATUS_TO_COL[card.status] || 'toBuild';
+      STATE[col].push(card.id);
+    });
+
+    renderBoard();
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
+async function patchStatus(cardId, status) {
+  const res = await fetch('/api/roadmap', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: cardId, status }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+// ── BUILD CARD ELEMENT ──────────────────────────────────────
+function buildCard(id) {
+  const card = CARDS_DATA[id];
+  if (!card) return null;
+
+  const priClass = 'pri-' + card.priority.toLowerCase();
+
+  const el = document.createElement('div');
+  el.className = 'k-card';
+  el.draggable = true;
+  el.dataset.id = id;
+
+  el.innerHTML = `
+    <div class="k-top">
+      <span class="k-name">${card.name}</span>
+      <span class="k-priority ${priClass}">
+        <span class="pri-dot"></span>${card.priority}
+      </span>
+    </div>
+    <div class="k-desc">${card.description || ''}</div>
+    <div class="k-foot">
+      <span class="k-tag">${card.tag || card.priority}</span>
+      <div class="k-grip">
+        <div class="k-grip-dot"></div><div class="k-grip-dot"></div>
+        <div class="k-grip-dot"></div><div class="k-grip-dot"></div>
+        <div class="k-grip-dot"></div><div class="k-grip-dot"></div>
+      </div>
+    </div>`;
+
+  el.addEventListener('dragstart', e => {
+    el.classList.add('dragging');
+    e.dataTransfer.setData('text/plain', id);
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  el.addEventListener('dragend', () => {
+    el.classList.remove('dragging');
+    document.querySelectorAll('.col-body').forEach(b => b.classList.remove('drag-over'));
+  });
+
+  return el;
+}
+
+// ── RENDER BOARD ────────────────────────────────────────────
+function renderBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+
+  COLUMNS.forEach(col => {
+    const cards = STATE[col.id] || [];
+
+    const colEl = document.createElement('div');
+    colEl.className = `column ${col.cls}`;
+
+    const head = document.createElement('div');
+    head.className = 'col-head';
+    head.innerHTML = `
+      <div class="col-head-left">
+        <span class="col-indicator"></span>
+        <span class="col-label">${col.label}</span>
+      </div>
+      <span class="col-count">${cards.length}</span>`;
+    colEl.appendChild(head);
+
+    const body = document.createElement('div');
+    body.className = 'col-body';
+    body.dataset.col = col.id;
+
+    if (cards.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-label';
+      empty.textContent = col.emptyText;
+      body.appendChild(empty);
+    } else {
+      cards.forEach(id => {
+        const cardEl = buildCard(id);
+        if (cardEl) body.appendChild(cardEl);
+      });
+    }
+
+    // Drop zone events
+    body.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      body.classList.add('drag-over');
+    });
+    body.addEventListener('dragleave', e => {
+      if (!body.contains(e.relatedTarget)) body.classList.remove('drag-over');
+    });
+    body.addEventListener('drop', e => {
+      e.preventDefault();
+      body.classList.remove('drag-over');
+      const cardId = e.dataTransfer.getData('text/plain');
+      if (!cardId || !CARDS[cardId]) return;
+      moveCard(cardId, col.id);
+    });
+
+    colEl.appendChild(body);
+    board.appendChild(colEl);
+  });
+}
+
+// ── MOVE CARD ───────────────────────────────────────────────
+function moveCard(cardId, targetColId) {
+  const newStatus = COL_TO_STATUS[targetColId];
+
+  // Optimistic update — render immediately
+  COLUMNS.forEach(col => {
+    STATE[col.id] = (STATE[col.id] || []).filter(id => id !== cardId);
+  });
+  STATE[targetColId] = [...(STATE[targetColId] || []), cardId];
+  if (CARDS_DATA[cardId]) CARDS_DATA[cardId].status = newStatus;
+  renderBoard();
+
+  // Persist to Notion
+  patchStatus(cardId, newStatus)
+    .then(() => showToast(`Moved to "${newStatus}"`))
+    .catch(err => {
+      console.error('Notion sync failed:', err);
+      showToast('Sync failed — refreshing', true);
+      setTimeout(loadRoadmap, 1500);
+    });
+}
+
+// ── REFRESH BUTTON ───────────────────────────────────────────
+document.getElementById('resetBtn').textContent = '↺  Refresh';
+document.getElementById('resetBtn').addEventListener('click', loadRoadmap);
+
+// ── LOADING / ERROR / TOAST ──────────────────────────────────
+function showLoading() {
+  document.getElementById('board').innerHTML =
+    `<div style="grid-column:1/-1;padding:48px 0;text-align:center;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;color:rgba(243,237,211,0.2);">Loading from Notion…</div>`;
+}
+
+function showError(msg) {
+  document.getElementById('board').innerHTML =
+    `<div style="grid-column:1/-1;padding:48px 0;text-align:center;font-size:13.5px;letter-spacing:-0.27px;color:rgba(200,96,61,0.85);">Failed to load: ${msg}</div>`;
+}
+
+let _toastTimer;
+function showToast(msg, isError = false) {
+  let t = document.getElementById('k-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'k-toast';
+    t.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:999;padding:10px 18px;font-size:12px;font-weight:500;letter-spacing:-0.2px;border-radius:0;transition:opacity 0.3s;pointer-events:none;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background  = isError ? 'rgba(200,96,61,0.92)' : 'rgba(52,57,77,0.96)';
+  t.style.color       = '#F3EDD3';
+  t.style.border      = isError ? '1px solid rgba(200,96,61,0.5)' : '1px solid rgba(243,237,211,0.1)';
+  t.style.opacity     = '1';
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { t.style.opacity = '0'; }, 2800);
+}
+
+// ── INIT ────────────────────────────────────────────────────
+loadRoadmap();
+</script>
+
+</body>
+</html>
